@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ボイストレーナーが開発！『歌い方攻略マニュアル付き歌詞カード』作成アプリ</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'lyrics/styles.css' %}">
+</head>
+<body>
+    <header>
+        <h1>ボイストレーナーが開発！『歌い方攻略マニュアル付き歌詞カード』作成アプリ</h1>
+        {% if user.is_authenticated %}
+            <p>{{ user.username }}さん、ようこそ！</p>
+            <nav>
+                <ul>
+                    <li><a href="{% url 'mypage' %}">マイページ</a></li> <!-- マイページへのリンクを追加 -->
+                    <li><a href="{% url 'logout' %}">ログアウト</a></li>
+                </ul>
+            </nav>
+        {% else %}
+            <nav>
+                <ul>
+                    <li><a href="{% url 'login' %}">ログイン</a></li>
+                    <li><a href="{% url 'signup' %}">登録</a></li>
+                </ul>
+            </nav>
+        {% endif %}
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <script src="{% static 'lyrics/scripts.js' %}"></script>
+</body>
+</html>

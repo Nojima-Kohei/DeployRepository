@@ -1,0 +1,133 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
+    color: #000000;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 50px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    text-align: center;
+    color: #00bfff;
+}
+
+button {
+    display: block;
+    width: 200px;
+    padding: 10px;
+    margin: 10px auto;
+    border: none;
+    border-radius: 5px;
+    background-color: #00bfff;
+    color: #ffffff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #009acd;
+}
+
+#annotation-tools button {
+    display: inline-block;
+    width: auto;
+    padding: 5px 10px;
+    margin: 5px;
+    background-color: #28a745;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#annotation-tools button[data-color="red"] {
+    background-color: red;
+}
+
+#annotation-tools button[data-color="pink"] {
+    background-color: pink;
+}
+
+#annotation-tools button[data-color="orange"] {
+    background-color: orange;
+}
+
+#annotation-tools button[data-color="peachpuff"] {
+    background-color: peachpuff;
+}
+
+#annotation-tools button[data-color="yellow"] {
+    background-color: yellow;
+    color: black;
+}
+
+#annotation-tools button[data-color="blue"] {
+    background-color: blue;
+}
+
+#annotation-tools button[data-color="blue"] {
+    background-color: skyblue;
+}
+
+
+#annotation-tools button.selected {
+    background-color: #218838;
+}
+
+#annotated-lyrics {
+    position: relative;
+    background-color: #f9f9f9;
+    border: 1px solid #dddddd;
+    padding: 20px;
+    width: 100%;
+    height: 300px;
+    overflow: auto;
+    margin-bottom: 20px;
+    font-size: 3em; /* フォントサイズを3倍に */
+}
+
+.annotation-image {
+    display: inline-block;
+    vertical-align: middle; /* 画像をテキストの中間に配置 */
+    width: 2.5%; /* 画像サイズを2.5%に縮小 */
+    height: auto;
+}
+
+.context-menu {
+    display: none;
+    position: absolute;
+    background: white;
+    border: 1px solid #ccc;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.context-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 10px 0;
+}
+
+.context-menu ul li {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.context-menu ul li:hover {
+    background: #f0f0f0;
+}

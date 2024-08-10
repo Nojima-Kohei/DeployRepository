@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div id="app" class="container">
+    <div id="annotation-tools">
+    <button data-color="red" style="background-color: red;">強い地声</button>
+    <button data-color="orange" style="background-color: orange;">地声寄りミックスボイス</button>
+    <button data-color="yellow" style="background-color: rgb(255, 255, 0);">地声寄りヘッドボイス</button>
+    <button data-color="rgb(255, 137, 157)" style="background-color: rgb(255, 137, 157);">優しい地声</button>
+    <button data-color="peachpuff" style="background-color: rgb(255, 196, 144);">裏声寄りミックスボイス</button>
+    <button data-color="rgb(0, 150, 255)" style="background-color: rgb(0, 150, 255);">裏声寄りヘッドボイス</button>
+    <button data-color="skyblue" style="background-color: skyblue;">ファルセット</button>
+        <p><a href="https://www.google.com/" target="_blank" rel="noopener noreferrer">用語一覧</a>.</p> <!-- 用語一覧へのリンク -->
+        <p><a href="{% url 'lyrics_input_return' %}">歌詞入力画面に戻る</a>.</p> <!-- 歌詞入力画面に戻るリンク -->
+    </div>
+
+    <div id="annotated-lyrics">{{ hiragana|safe }}</div>
+    <button onclick="undo()">ひとつ前の状態に戻す</button>
+    <button onclick="redo()">やりなおし</button>
+    <form method="post" action="{% url 'save_annotations' %}">
+        {% csrf_token %}
+        <input type="hidden" name="song_id" value="{{ song.id }}"> <!-- song.id が空でないことを確認 -->
+        <input type="hidden" name="annotations" id="annotations-data">
+        <button type="submit">保存</button>
+    </form>
+    
+    <button onclick="exportLyrics()">エクスポート</button>
+</div>
+<div id="context-menu" class="context-menu">
+    <ul>
+        <li data-image-path="{% static 'images/vibrato.png' %}">ビブラート</li>
+        <li data-image-path="{% static 'images/tremolo.png' %}">こぶし</li>
+        <li data-image-path="{% static 'images/bend_up.png' %}">しゃくり上げ</li>
+        <li data-image-path="{% static 'images/bend_down.png' %}">フォール</li>
+        <li data-image-path="{% static 'images/distortion.png' %}">がなり</li>
+        <li data-image-path="{% static 'images/breathe.png' %}">ブレス</li>
+        <li data-image-path="{% static 'images/crescendo.jpg' %}">クレッシェンド</li>
+        <li data-image-path="{% static 'images/decrescendo.jpeg' %}">デクレッシェンド</li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'lyrics/scripts.js' %}"></script>
+{% endblock %}

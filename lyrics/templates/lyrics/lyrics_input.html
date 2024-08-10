@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h2>歌詞入力</h2>
+    <form method="post" action="{% url 'lyrics_convert' %}" class="lyrics-form">
+        {% csrf_token %}
+        <textarea id="lyrics-input" name="lyrics" placeholder="ここに歌詞を入力">{{ lyrics|safe }}</textarea>  <!-- 歌詞の入力欄 -->
+        <button type="submit">ひらがなに変換</button>  <!-- 変換ボタン -->
+    </form>
+    <p>ひらがな変換結果:</p>
+    <form method="post" action="{% url 'lyrics_convert' %}" class="hiragana-form">  <!-- 変換後のひらがなの入力欄 -->
+        {% csrf_token %}
+        <textarea id="hiragana-output" name="hiragana" placeholder="ここに変換されたひらがな">{{ hiragana|safe }}</textarea>
+        <input type="hidden" name="lyrics" value="{{ lyrics|safe }}">
+        <button type="submit">保存</button>  <!-- 「保存」ボタンを追加 -->
+    </form>
+    <button type="button" onclick="window.location.href='{% url 'lyrics_annotate' %}';">次へ</button>  <!-- 次のページへの遷移ボタン -->
+</div>
+{% endblock %}
+
+
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // CSRFトークンを取得するヘルパー関数
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // 歌詞をひらがなに変換する関数
+        async function convertLyricsToHiragana(lyrics) {
+            try {
+                const response = await fetch('{% url "lyrics_convert" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: new URLSearchParams({
+                        'lyrics': lyrics
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                return data.hiragana;
+            } catch (error) {
+                console.error('Error converting lyrics to hiragana:', error);
+                return null;
+            }
+        }
+
+        // 変換ボタンのクリックイベントリスナーを設定
+        const convertButton = document.getElementById('convert-button');
+        if (convertButton) {
+            convertButton.addEventListener('click', async () => {
+                const lyrics = document.getElementById('lyrics-input').value;
+                const hiragana = await convertLyricsToHiragana(lyrics);
+                if (hiragana) {
+                    document.getElementById('hiragana-output').value = hiragana;
+                }
+            });
+        }
+
+        // 手動修正されたひらがなをセッションに保存する関数
+        async function saveHiraganaToSession(hiragana) {
+            try {
+                const response = await fetch('{% url "save_hiragana" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: new URLSearchParams({
+                        'hiragana': hiragana
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+            } catch (error) {
+                console.error('Error saving hiragana to session:', error);
+            }
+        }
+
+        // 次へボタンのクリックイベントリスナーを設定
+        const nextButton = document.getElementById('next-button');
+        if (nextButton) {
+            nextButton.addEventListener('click', async () => {
+                const lyrics = document.getElementById('lyrics-input').value;
+                const hiragana = document.getElementById('hiragana-output').value;
+                if (lyrics && hiragana) {
+                    localStorage.setItem('lyrics', lyrics);
+                    localStorage.setItem('hiragana', hiragana);
+                    await saveHiraganaToSession(hiragana);  // 手動修正されたひらがなをセッションに保存
+                    window.location.href = '{% url "lyrics_annotate" %}';
+                } else {
+                    alert('歌詞を入力してください。');
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
