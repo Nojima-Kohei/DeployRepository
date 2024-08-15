@@ -1,12 +1,21 @@
 import os  # OS関連の機能を使用するためのモジュールをインポート
+from django.contrib.auth.models import User
 import json  # JSONデータを扱うためのモジュールをインポート
 from django.http import JsonResponse  # JSON形式のレスポンスを返すためのクラスをインポート
 from django.conf import settings  # Djangoの設定を取得するためのモジュールをインポート
 from django.shortcuts import render, redirect  # テンプレートをレンダリングするための関数をインポート
-from accounts.models import SongInformation, AnnotationInformation
+from accounts.models import LyricInformation, AnnotationInformation
+from django.contrib.auth.decorators import login_required  # ログインが必要なビューに適用するデコレーター
 from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse  # reverse関数をインポート
 import MeCab  # MeCabモジュールをインポート
 import ipadic  # ipadic
+from .models import Lyric, Annotation  # モデルをインポート
+from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpRequest,HttpResponse
+from weasyprint import HTML, CSS
+from django.template.loader import render_to_string
+
 
 # 歌詞をひらがなに変換する関数
 def convert_to_hiragana(text):
@@ -73,18 +82,26 @@ def save_hiragana(request):
 
 
 # 歌詞入力ページを表示するビュー
+@login_required
 def lyrics_input(request):
     lyrics = request.session.get('lyrics', '')  # セッションから元の歌詞を取得
     hiragana = request.session.get('hiragana', '')  # セッションからひらがなを取得
     return render(request, 'lyrics/lyrics_input.html', {'lyrics': lyrics, 'hiragana': hiragana})  # テンプレートにデータを渡してレンダリング
 
 # 歌詞注釈ページを表示するビュー
+@login_required
 def lyrics_annotate(request):
     hiragana = request.session.get('hiragana', '').replace('\n', '<br>').replace(' ', '&nbsp;').replace('　', '&nbsp;')  # セッションからひらがな変換結果を取得し、改行やタグに変換
     annotations = request.session.get('annotations', '[]')  # セッションから注釈データを取得
-    return render(request, 'lyrics/lyrics_annotate.html', {'hiragana': hiragana, 'annotations': annotations})
+    save_annotations_url = reverse('save_annotations')  # 'save_annotations'のURLを生成
+    return render(request, 'lyrics/lyrics_annotate.html', {
+        'hiragana': hiragana,
+        'annotations': annotations,
+        'save_annotations_url': save_annotations_url  # URLをテンプレートに渡す
+    })
 
 # 歌詞入力ページに戻るビュー
+@login_required
 def lyrics_input_return(request):
     lyrics_text = request.session.get('lyrics', '').replace('<br>', '\n').replace('&nbsp;', ' ')  # セッションから歌詞を取得して改行と空白を元に戻す
     hiragana_text = request.session.get('hiragana', '').replace('<br>', '\n').replace('&nbsp;', ' ')  # セッションからひらがなを取得して改行と空白を元に戻す
@@ -98,27 +115,40 @@ def get_annotations(request):
     ]
     return JsonResponse({"annotations": annotations}, safe=False)  # 注釈データをJSON形式で返す
 
+@csrf_exempt
 def save_annotations(request):
     if request.method == 'POST':
-        annotations = request.POST.get('annotations', '[]')
-        request.session['annotations'] = annotations
+        data = json.loads(request.body.decode('utf-8'))
+        lyric_id = data.get('lyric_id')
+        title = data.get('title')
+        artist = data.get('artist')
+        hiragana_lyrics = data.get('hiragana_lyrics')
+        annotations = data.get('annotations')
 
-        lyric_id = request.POST.get('lyric_id')
-        if not lyric_id:
-            return JsonResponse({'status': 'error', 'message': 'Lyric ID is missing'}, status=400)
+        user = request.user  # ユーザー情報を取得
 
-        lyric = get_object_or_404(SongInformation, id=lyric_id)
+        if lyric_id:
+            lyric = Lyric.objects.get(id=lyric_id)
+            lyric.title = title
+            lyric.artist = artist
+            lyric.hiragana_lyrics = hiragana_lyrics
+        else:
+            lyric = Lyric.objects.create(title=title, artist=artist, hiragana_lyrics=hiragana_lyrics, user=user)
 
-        annotations_data = json.loads(annotations)
-        for annotation in annotations_data:
-            line_number = annotation.get('line')
-            annotation_type = annotation.get('type')
-            AnnotationInformation.objects.create(
+        lyric.save()
+
+        for annotation in annotations:
+            Annotation.objects.create(
                 lyric=lyric,
-                user=request.user,
-                line_number=line_number,
-                annotation_data=annotation_type
+                text=annotation.get('text'),
+                color=annotation.get('color'),
+                image_path=annotation.get('image_path'),
+                position=annotation.get('position'),
+                user=user  # ここでユーザーを関連付け
             )
 
-        return redirect('lyrics_annotate')
+        return JsonResponse({'status': 'success'})
+
     return JsonResponse({'status': 'error'}, status=400)
+
+

@@ -1,24 +1,39 @@
 {% extends "base.html" %}
+{% load static %}
 
+{% if user.is_authenticated %}
 {% block content %}
 <div class="container">
-    <h2>{{ user.username }}のマイページ</h2>
-    
-    <h3>保存済みの歌詞カード</h3>
-    <ul>
-        {% for song in songs %}
-        <li>
-            <a href="{% url 'view_annotations' song.id %}">{{ song.title }}</a>
-            <form method="post" action="{% url 'delete_song' song.id %}" style="display:inline;">
-                {% csrf_token %}
-                <button type="submit">削除</button>
-            </form>
-        </li>
-        {% empty %}
-        <li>保存済みの歌詞カードはありません。</li>
-        {% endfor %}
-    </ul>
+    <h2>{{ user.username }}さんのマイページ</h2>
 
-    <a href="{% url 'lyrics_input' %}" class="btn btn-primary">新しい歌詞カードを作成</a>
+    <a href="{% url 'lyrics_annotate' %}" class="btn btn-continue">前回の続きから始める</a>
+    <a href="{% url 'lyrics_input' %}" class="btn btn-create">新しい歌詞カードを作成</a>
+    <p>
+        <a href="{% url 'Term:term_list' %}" target="_blank" rel="noopener noreferrer" class="btn-custom">ボイトレ用語一覧</a>
+    </p>
+
+    <!-- ここから追加の文章を挿入 -->
+    <div class="welcome-text">
+        <p>「歌い方攻略マニュアル付き歌詞カード」作成アプリへようこそ！</p>
+        <h3>はじめに</h3>
+        <p>突然ですが、"歌が上手くなるコツ"ってなんだと思いますか？</p>
+        <p>それは「モノマネ」です！まずは自分が憧れる歌手、純粋に好きな歌手から徹底的に真似ること！</p>
+        <p>歌声と絵の具は似てると思ってます。赤い絵の具しか持っていなければ赤しか塗れません。でも青も手に入れたら？そう、紫も塗れるようになります！</p>
+        <p>黄色の絵の具を手に入ればオレンジも緑も塗れるようになりますね！</p>
+        <p>しかも、混ぜる割合のさじ加減を変えるだけで使える色はさらに増える！</p>
+        <p>歌も同じ！ものまねの引き出しが増えれば増えるほど、表現に自由が利くようになるんです！そうしてたくさん増やした末に、持って生まれた自分だけのオリジナルボイスと混ぜる、私はこれが極意だと思っています！</p>
+
+        <p>でも…</p>
+        <p>最近トレンドの歌って、素人に歌わせる気がないのでは…？と思うほどむずかしいですよね…。</p>
+        <p>すごいってことは分かるんだけど、レベルが高すぎて"どうすごいのか"がわからない…そんな経験はありませんか？</p>
+        <p>「憧れるあの人が使っている歌唱法」の存在を知らなければ、そもそもそこに意識を向けて聴かないから、情報の解像度が下がる→ものまねの質も落ちると負のスパイラルに…</p>
+        <p>そこで！あらかじめ用意された選択肢から選ぶ形式であなた自身が歌詞の注釈を付けられるアプリを作れば、ここでこう歌う！という対策付き歌詞カードを手に入れながら耳も養えて一石二鳥なのでは！？と思いこのWebアプリをを作りました！</p>
+        <p>マウスひとつで、1文字単位で注釈を書き込めます！</p>
+    </div>
+    <!-- 追加の文章ここまで -->
+    
 </div>
 {% endblock %}
+{% else %}
+<p>このページを表示するにはログインが必要です。</p>
+{% endif %}

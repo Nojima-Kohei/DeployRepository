@@ -4,30 +4,62 @@
 {% block content %}
 <div id="app" class="container">
     <div id="annotation-tools">
-    <button data-color="red" style="background-color: red;">強い地声</button>
-    <button data-color="orange" style="background-color: orange;">地声寄りミックスボイス</button>
-    <button data-color="yellow" style="background-color: rgb(255, 255, 0);">地声寄りヘッドボイス</button>
-    <button data-color="rgb(255, 137, 157)" style="background-color: rgb(255, 137, 157);">優しい地声</button>
-    <button data-color="peachpuff" style="background-color: rgb(255, 196, 144);">裏声寄りミックスボイス</button>
-    <button data-color="rgb(0, 150, 255)" style="background-color: rgb(0, 150, 255);">裏声寄りヘッドボイス</button>
-    <button data-color="skyblue" style="background-color: skyblue;">ファルセット</button>
-        <p><a href="https://www.google.com/" target="_blank" rel="noopener noreferrer">用語一覧</a>.</p> <!-- 用語一覧へのリンク -->
+        <button data-color="red" style="background-color: red;">強い地声</button>
+        <button data-color="orange" style="background-color: orange;">地声寄りミックスボイス</button>
+        <button data-color="yellow" style="background-color: rgb(255, 255, 0);">地声寄りヘッドボイス</button>
+        <button data-color="rgb(255, 137, 157)" style="background-color: rgb(255, 137, 157);">優しい地声</button>
+        <button data-color="peachpuff" style="background-color: rgb(255, 196, 144);">裏声寄りミックスボイス</button>
+        <button data-color="rgb(0, 150, 255)" style="background-color: rgb(0, 150, 255);">裏声寄りヘッドボイス</button>
+        <button data-color="skyblue" style="background-color: skyblue;">ファルセット</button>
+        <p><a href="{% url 'Term:term_list' %}" target="_blank" rel="noopener noreferrer">ボイトレ用語一覧</a>.</p> <!-- 用語一覧へのリンク -->
         <p><a href="{% url 'lyrics_input_return' %}">歌詞入力画面に戻る</a>.</p> <!-- 歌詞入力画面に戻るリンク -->
     </div>
 
     <div id="annotated-lyrics">{{ hiragana|safe }}</div>
-    <button onclick="undo()">ひとつ前の状態に戻す</button>
-    <button onclick="redo()">やりなおし</button>
-    <form method="post" action="{% url 'save_annotations' %}">
-        {% csrf_token %}
-        <input type="hidden" name="song_id" value="{{ song.id }}"> <!-- song.id が空でないことを確認 -->
-        <input type="hidden" name="annotations" id="annotations-data">
-        <button type="submit">保存</button>
-    </form>
-    
-    <button onclick="exportLyrics()">エクスポート</button>
-</div>
+<button onclick="undo()">ひとつ前の状態に戻す</button>
+<button onclick="redo()">やりなおし</button>
+<button type="button" id="reset-button">全てリセット</button>
+
+<!-- 保存フォームの定義 -->
+<form method="post" id="save-form">
+    {% csrf_token %}
+    <input type="hidden" name="lyric_id" id="lyric_id" value="{{ lyric.id }}"> <!-- 隠しフィールドにlyric_idを設定 -->
+
+    <!-- 曲名とアーティスト名の入力欄 -->
+    <div class="form-group">
+        <label for="title">曲名:</label>
+        <input type="text" id="title" name="title" value="{{ lyric.title }}" required> <!-- 曲名を入力するフィールド -->
+    </div>
+
+    <div class="form-group">
+        <label for="artist">アーティスト名:</label>
+        <input type="text" id="artist" name="artist" value="{{ lyric.artist }}" required> <!-- アーティスト名を入力するフィールド -->
+    </div>
+
+    <!-- ひらがな歌詞を保存するフィールド -->
+    <input type="hidden" name="hiragana_lyrics" id="hiragana_lyrics" value="{{ hiragana }}">
+
+    <!-- 注釈データを保存する隠しフィールド -->
+    <input type="hidden" name="annotations" id="annotations-data">
+
+    <!-- 保存ボタン -->
+    <button type="submit" id="save-button">状態を一時保存</button> <!-- ローカルストレージにするボタン -->
+</form>
+
+<!-- PDFで端末に保存ボタン -->
+<button id="export-pdf-button">PDFで保存</button>
+
+<!-- 手順の説明文を追加 -->
+<div class="text-center mt-4">
+        <p>
+            ［使い方］<br>
+            1. 反映されたひらがな歌詞の、注釈を追加したい任意の文をマウスでドラッグして選択してください。<br><br>
+            2. 文を選択した状態で右クリックするとメニューから注釈画像を選んで挿入できます。発声法についてマーカーで色分けしたい場合は文章を選択した状態で上のボタン一覧から選択すればマーカーを引けます。<br><br>
+            3. 途中で中断したくなったら「状態を一時保存」ボタンを押してください。ブラウザ上に一時的に保存され、次回再度このページを開いた際に復元されます。(※ただし、永久保存ではないため、完成品を保存したい場合は「PDFに保存」ボタンを押してエクスポートしてください。)<br><br>
+            ※注意※<br>同じ文章にマーカーを二重にかぶせないでください。文章を上から塗りつぶした形でPDFが出力されてしまいます。もし重複した場合は「ひとつ前の状態に戻す」ボタンなどでマーカーを取り消してください。
+
 <div id="context-menu" class="context-menu">
+    <!-- コンテキストメニューの定義 -->
     <ul>
         <li data-image-path="{% static 'images/vibrato.png' %}">ビブラート</li>
         <li data-image-path="{% static 'images/tremolo.png' %}">こぶし</li>
@@ -35,12 +67,17 @@
         <li data-image-path="{% static 'images/bend_down.png' %}">フォール</li>
         <li data-image-path="{% static 'images/distortion.png' %}">がなり</li>
         <li data-image-path="{% static 'images/breathe.png' %}">ブレス</li>
-        <li data-image-path="{% static 'images/crescendo.jpg' %}">クレッシェンド</li>
-        <li data-image-path="{% static 'images/decrescendo.jpeg' %}">デクレッシェンド</li>
+        <li data-image-path="{% static 'images/crescendo.png' %}">クレッシェンド</li>
+        <li data-image-path="{% static 'images/decrescendo.png' %}">デクレッシェンド</li>
     </ul>
 </div>
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static 'lyrics/scripts.js' %}"></script>
+<script type="text/javascript">
+
+    // Djangoテンプレートタグで生成したURLをJavaScript変数に格納
+    const saveAnnotationsUrl = "{% url 'save_annotations' %}";
+    const mypageUrl = "{% url 'mypage' %}";
+</script>
 {% endblock %}

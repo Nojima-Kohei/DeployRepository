@@ -14,15 +14,22 @@
             <p>{{ user.username }}さん、ようこそ！</p>
             <nav>
                 <ul>
-                    <li><a href="{% url 'mypage' %}">マイページ</a></li> <!-- マイページへのリンクを追加 -->
-                    <li><a href="{% url 'logout' %}">ログアウト</a></li>
+                    <li><a href="{% url 'welcome' %}">ホームへ</a></li>
+                        <li><a href="{% url 'accounts:mypage' %}">マイページ</a></li>
+                        <!-- ログアウトボタンをPOSTリクエストに修正 -->
+                        <li>
+                            <form id="logout-form" method="post" action="{% url 'accounts:logout' %}">
+                                {% csrf_token %}
+                                <a href="{% url 'accounts:logout' %}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">ログアウト</a>
+
+                        </form>
+                    </li>
                 </ul>
             </nav>
         {% else %}
             <nav>
                 <ul>
-                    <li><a href="{% url 'login' %}">ログイン</a></li>
-                    <li><a href="{% url 'signup' %}">登録</a></li>
+                    <li><a href="{% url 'welcome' %}">ホームへ</a></li>
                 </ul>
             </nav>
         {% endif %}
@@ -30,6 +37,70 @@
     <main>
         {% block content %}{% endblock %}
     </main>
-    <script src="{% static 'lyrics/scripts.js' %}"></script>
+    <script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById('export-pdf-button').addEventListener('click', function() {
+        const element = document.getElementById('annotated-lyrics');
+        const originalHeight = element.style.height; // 元の高さを保存
+        element.style.height = element.scrollHeight + 'px'; // 高さをコンテンツ全体に拡張
+
+        // フォントサイズを調整して、1～2ページに収まるようにする
+        element.style.fontSize = '1.5em'; // フォントサイズを小さく設定（調整可能）
+
+        // 各行に対してマーカーを調整
+        element.querySelectorAll("span").forEach(span => {
+            span.style.zIndex = "10"; // テキストを前面に配置
+            span.style.position = "relative"; // 相対位置に設定
+
+            // マーカーの背景を行ごとに設定し、行間に重ならないようにする
+            span.style.display = "inline-block"; // 行ごとに分割
+            span.style.padding = "0 2px"; // テキストの左右に少しスペースを追加して行間を調整
+
+            // マーカーが文章の下に配置されるように::beforeを使用
+            span.style.position = "relative";
+            const marker = document.createElement('span');
+            marker.style.position = 'absolute';
+            marker.style.top = 0;
+            marker.style.left = 0;
+            marker.style.right = 0;
+            marker.style.bottom = 0;
+            marker.style.backgroundColor = span.style.backgroundColor;
+            marker.style.zIndex = 1;
+            marker.style.display = 'block';
+        });
+
+        // PDF生成処理
+        html2pdf().from(element).set({
+            margin: [1, 0.5], // 上下に余白を少なくしてページ数を抑える
+            filename: 'annotated_lyrics.pdf',
+            html2canvas: { 
+                scale: 1.5, // スケールを少し下げて1～2ページに収める
+                windowWidth: element.scrollWidth,
+                windowHeight: element.scrollHeight,
+                useCORS: true // 跨いだページでも一貫してレンダリング
+            },
+            jsPDF: { 
+                unit: 'in', 
+                format: 'letter', 
+                orientation: 'portrait',
+                compress: true // ページ数を減らすために圧縮
+            }
+        }).save().then(() => {
+            element.style.height = originalHeight; // 元の高さに戻す
+            element.style.fontSize = ''; // フォントサイズを元に戻す
+
+            
+        });
+    });
+});
+
+
+
+        const saveAnnotationsUrl = "{% url 'save_annotations' %}";
+        const mypageUrl = "{% url 'accounts:mypage' %}";
+    </script>
+    <!-- 必要なライブラリをインクルード -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+    <script src="{% static 'lyrics/scripts.js' %}"></script> 
 </body>
 </html>

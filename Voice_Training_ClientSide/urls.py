@@ -17,11 +17,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('lyrics/', include('lyrics.urls')),
     path('accounts/', include('accounts.urls')),
     path('', TemplateView.as_view(template_name="welcome.html"), name='welcome'),  # Welcomeページへのルート
-    # path('accounts/', include('allauth.urls')),  # Django AllauthのURLを追加
+    path('accounts/', include('allauth.urls')),  # Django AllauthのURLを追加
+    path('terms/', include('Term.urls')),  # TermアプリのURLパターンをインクルードし、名前空間を使用可能にする
+    path('markdownx/', include('markdownx.urls')),  # MarkdownxのURLパターンを追加します。
 ]

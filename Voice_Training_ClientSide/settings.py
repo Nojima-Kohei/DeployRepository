@@ -22,13 +22,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'django.contrib.sites',  # Django Allauth に必要
-    # 'allauth',
-    # 'allauth.account',
-    # 'allauth.socialaccount',
-    # 'allauth.socialaccount.providers.twitter',  # 必要なプロバイダーを追加
+    'django.contrib.sites',  # Django Allauth に必要
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.twitter',  # 必要なプロバイダーを追加
+    'markdownx',  # Markdownxを追加
+    'markdownify',
+    'adminsortable2',
+    'django_bootstrap5',
     'lyrics',
     'accounts',
+    'Term',
 ]
 
 MIDDLEWARE = [
@@ -39,7 +44,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'allauth.account.middleware.AccountMiddleware',  # 追加する行
+    'allauth.account.middleware.AccountMiddleware',  # 追加する行
 ]
 
 ROOT_URLCONF = 'Voice_Training_ClientSide.urls'
@@ -55,8 +60,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                # 'allauth.account.context_processors.account',  # 追加する行
-                # 'allauth.socialaccount.context_processors.socialaccount',  # 追加する行
+                # 'allauth.account.context_processors.account',  # エラーのためコメントアウト化
+                # 'allauth.socialaccount.context_processors.socialaccount',  # エラーのためコメントアウト化
             ],
         },
     },
@@ -122,26 +127,26 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # 本番環境用の静的�
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Django Allauth 設定
-# Django Allauth 設定
-LOGIN_REDIRECT_URL = '/lyrics/input/'  # ログイン後のリダイレクト先
-ACCOUNT_AUTHENTICATION_METHOD = 'username_email'  # ユーザー名とメールアドレスで認証
+LOGIN_REDIRECT_URL = 'accounts:mypage'  # ログイン後にマイページにリダイレクト
+ACCOUNT_AUTHENTICATION_METHOD = 'email'  # メールアドレスをユーザー名の代わりに使用
 ACCOUNT_EMAIL_REQUIRED = True  # メールアドレス必須
 ACCOUNT_EMAIL_VERIFICATION = 'optional'  # メールアドレスの確認を任意
-ACCOUNT_USERNAME_REQUIRED = True  # ユーザー名必須
+ACCOUNT_USERNAME_REQUIRED = True  # ユーザー名を必須にしない
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True  # パスワード確認欄
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True  # メール確認後にログイン
-# AUTHENTICATION_BACKENDS = (
-#     'django.contrib.auth.backends.ModelBackend',
-#     'allauth.account.auth_backends.AuthenticationBackend',
-    
-# )
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+    'accounts.authentication.EmailBackend',  # 追加したカスタムバックエンド
+)
 
-# SITE_ID = 1
+SITE_ID = 1
 
-LOGIN_REDIRECT_URL = '/lyrics/input/'  # ログイン後のリダイレクト先
-LOGOUT_REDIRECT_URL = '/accounts/login/'  # ログアウト後のリダイレクト先
+LOGIN_REDIRECT_URL = 'accounts:mypage'  # ログイン後のリダイレクト先
+LOGOUT_REDIRECT_URL = 'welcome'  # ログアウト後のリダイレクト先
+AUTH_USER_MODEL = 'accounts.User'
 
-# ソーシャルアカウントのプロバイダーの設定
+# ソーシャルアカウントのプロバイダーの設定 Django管理画面ではなくコードのみで管理する場合にコメントアウトを解除
 # SOCIALACCOUNT_PROVIDERS = {
 #     'twitter': {
 #         'APP': {
@@ -151,3 +156,15 @@ LOGOUT_REDIRECT_URL = '/accounts/login/'  # ログアウト後のリダイレク
 #         }
 #     }
 # }
+
+# メディアファイルの設定
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+# Django-MarkdownXの設定（例）
+MARKDOWNX_MARKDOWN_EXTENSIONS = [
+    'markdown.extensions.extra',
+    'markdown.extensions.codehilite',
+    'markdown.extensions.toc',
+]
+

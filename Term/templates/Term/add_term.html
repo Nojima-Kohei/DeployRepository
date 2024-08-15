@@ -1,0 +1,8 @@
+<h1>用語の{{ view.action }}</h1>  <!-- ページのタイトルを表示します（追加または編集） -->
+<form method="post">  <!-- POSTメソッドでフォームを送信します -->
+    {% csrf_token %}  <!-- CSRF保護のためのトークンを含めます -->
+    {{ form.as_p }}  <!-- フォームをパラグラフ形式で表示します -->
+    <button type="submit">保存</button>  <!-- フォーム送信ボタン -->
+</form>
+<a href="{% url 'Term:term_list' %}">用語集に戻る</a>  <!-- 用語リストページへのリンク -->
+

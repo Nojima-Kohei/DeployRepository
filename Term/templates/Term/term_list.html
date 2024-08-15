@@ -1,0 +1,19 @@
+{% load custom_filters %}  <!-- カスタムフィルターをロード -->
+
+<h1>ボイストレーニング用語集</h1>  <!-- ページのタイトルを表示します -->
+<ul>
+    {% for term in terms %}  <!-- すべての用語についてループします -->
+    <li>
+        <h2>{{ term.name }}</h2>  <!-- 用語名を表示します -->
+        <p>{{ term.description|markdown_with_breaks|safe }}</p>  <!-- 用語の説明をMarkdownとして表示し、改行を反映 -->
+    
+        {% if user.is_superuser %}  <!-- ユーザーがスーパーユーザーであるか確認 -->
+            <a href="{% url 'Term:edit_term' term.id %}">編集</a>  <!-- スーパーユーザーのみが編集リンクを表示 -->
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+
+{% if user.is_superuser %}  <!-- ユーザーがスーパーユーザーであるか確認 -->
+    <a href="{% url 'Term:add_term' %}">新しい用語を追加</a>  <!-- スーパーユーザーのみが「新しい用語を追加」ボタンを表示 -->
+{% endif %}
