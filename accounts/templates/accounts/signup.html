@@ -1,44 +1,83 @@
 {% extends "base.html" %}
 {% load static %}
-{% load django_bootstrap5 %}  <!-- ここでBootstrapをロード -->
+{% load django_bootstrap5 %}  <!-- タグライブラリをロード -->
+{% load socialaccount %}
 
-{% if user.is_authenticated %}
+{% bootstrap_css %}  <!-- BootstrapのCSSを読み込み -->
+{% bootstrap_javascript %}  <!-- 必要ならBootstrapのJSも読み込み -->
+
+
 {% block content %}
-<div class="container">
-    <h2>{{ user.username }}さんのマイページ</h2>
+{% if not user.is_authenticated %}
+<div class="container mt-5">
+    <h2 class="text-center">新規ユーザー登録</h2>
+    <p class="text-center">あなただけの歌い方設計図付き歌詞カードを作れるアプリです！</p>
+    <p class="text-center">歌詞をコピペしたら、ワンクリックで全文をひらがなに変換！</p>
+    <p class="text-center">マウスひとつで、1文字単位で書き込めます！</p>
+    <p class="text-center">まずは、新規登録をしてアプリをお試しください。また、既にアカウントをお持ちの場合は、ログインしてください。</p>
 
-    <a href="{% url 'lyrics_annotate' %}" class="btn btn-continue">前回の続きから始める</a>
-    <a href="{% url 'lyrics_input' %}" class="btn btn-create">新しい歌詞カードを作成</a>
-    <p>
-        <a href="{% url 'Term:term_list' %}" target="_blank" rel="noopener noreferrer" class="btn-custom">用語一覧</a>
-    </p>
-
-    <!-- ここから追加の文章をスタイリッシュなカードで囲む -->
-    <div class="card mt-4">
-        <div class="card-body">
-            <h5 class="card-title">「歌い方攻略マニュアル付き歌詞カード」作成アプリへようこそ！</h5>
-            <h6 class="card-subtitle mb-2 text-muted">はじめに</h6>
-            <p class="card-text">突然ですが、"歌が上手くなるコツ"ってなんだと思いますか？</p>
-            <p class="card-text">それは「モノマネ」です！まずは自分が憧れる歌手、純粋に好きな歌手から徹底的に真似ること！</p>
-            <p class="card-text">歌声と絵の具は似てると思ってます。赤い絵の具しか持っていなければ赤しか塗れません。でも青も手に入れたら？そう、紫も塗れるようになります！</p>
-            <p class="card-text">黄色の絵の具を手に入ればオレンジも緑も塗れるようになりますね！</p>
-            <p class="card-text">しかも、混ぜる割合のさじ加減を変えるだけで使える色はさらに増える！</p>
-            <p class="card-text">歌も同じ！ものまねの引き出しが増えれば増えるほど、表現に自由が利くようになるんです！そうしてたくさん増やした末に、持って生まれた自分だけのオリジナルボイスと混ぜる、私はこれが極意だと思っています！</p>
-            <p class="card-text">でも…</p>
-            <p class="card-text">最近トレンドの歌って、素人に歌わせる気がないのでは…？と思うほどむずかしいですよね…。</p>
-            <p class="card-text">すごいってことは分かるんだけど、レベルが高すぎて"どうすごいのか"がわからない…そんな経験はありませんか？</p>
-            <p class="card-text">「憧れるあの人が使っている歌唱法」の存在を知らなければ、そもそもそこに意識を向けて聴かないから、情報の解像度が下がる→ものまねの質も落ちると負のスパイラルに…</p>
-            <p class="card-text">そこで！あらかじめ用意された選択肢から選ぶ形式であなた自身が歌詞の注釈を付けられるアプリを作れば、ここでこう歌う！という対策付き歌詞カードを手に入れながら耳も養えて一石二鳥なのでは！？と思いこのWebアプリをを作りました！</p>
-            <p class="card-text">マウスひとつで、1文字単位で注釈を書き込めます！</p>
-        </div>
+    <div class="card p-4 shadow-sm">
+        <form method="post" action="{% url 'accounts:signup' %}">
+            {% csrf_token %}
+            {{ form.as_p }}  <!-- フォーム全体を {{ form.as_p }} でレンダリング -->
+            <button type="submit" class="btn btn-primary mt-3 w-100">登録</button> <!-- 登録ボタン -->
+        </form>
     </div>
-    <!-- 追加の文章ここまで -->
-    
 </div>
-{% endblock %}
 {% else %}
-<p>このページを表示するにはログインが必要です。</p>
+<div class="container mt-5">
+    <p class="text-center">ログイン済みです。<a href="{% url 'mypage' %}">マイページに戻る</a></p>
+</div>
 {% endif %}
 
-{% bootstrap_css %} <!-- BootstrapのCSSを適用 -->
-{% bootstrap_javascript %} <!-- 必要ならBootstrapのJavaScriptを適用 -->
+<style>
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+form input, form select, form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+.btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+@media (max-width: 600px) {
+    .container {
+        max-width: 100%;
+        padding: 10px;
+    }
+}
+</style>
+
+{% endblock %}

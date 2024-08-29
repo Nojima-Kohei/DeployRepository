@@ -96,9 +96,9 @@ button:hover {
     background-color: #009acd;
 }
 
-/* 提出ボタンのスタイル */
+/* 提出ボタンのスタイル2024/8/28 */
 button[type="submit"] {
-    width: 100%; /* ボタンの幅を100%に設定 */
+    width: 15%; /* ボタンの幅を100%に設定 */
     padding: 10px;
     background-color:  #00bfff;
     color: white;

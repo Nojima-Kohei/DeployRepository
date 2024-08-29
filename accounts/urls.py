@@ -3,6 +3,7 @@ from django.contrib.auth import views as auth_views
 from . import views
 from .forms import CustomAuthenticationForm
 from django.urls import path, include
+from .views import logout_and_clear_session
 
 app_name = 'accounts'  # 名前空間を設定
 
@@ -19,4 +20,6 @@ urlpatterns = [
     path('save_annotations/', views.save_annotations, name='save_annotations'),
     path('view_annotations/<int:lyric_id>/', views.view_annotations, name='view_annotations'),
     path('delete_song/<int:lyric_id>/', views.delete_song, name='delete_song'),
+    path('logout/', logout_and_clear_session, name='logout'),
+    path('return_lyrics_input_from_mypage/', views.return_lyrics_input_from_mypage, name='return_lyrics_input_from_mypage'),
 ]

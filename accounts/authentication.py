@@ -1,12 +1,14 @@
 # accounts/authentication.py
 from django.contrib.auth.backends import BaseBackend
 from django.contrib.auth import get_user_model
+from django.db.models import Q
 
-class EmailBackend(BaseBackend):
-    def authenticate(self, request, email=None, password=None, **kwargs):
+class EmailOrTwitterIDBackend(BaseBackend):
+    def authenticate(self, request, username=None, password=None, **kwargs):
         UserModel = get_user_model()
         try:
-            user = UserModel.objects.get(email=email)
+            # `username`はemailまたはtwitter_idとして使用する
+            user = UserModel.objects.get(Q(email=username) | Q(twitter_id=username))
         except UserModel.DoesNotExist:
             return None
 

@@ -61,6 +61,75 @@ document.addEventListener("DOMContentLoaded", function() {
         // 保存ボタンが見つからない場合、エラーメッセージをログに出力
         console.error("Save button not found.");
     }
+    
+    // ファイルに保存する機能
+    const saveToFileButton = document.getElementById("save-to-file-button");
+    if (saveToFileButton) {
+        saveToFileButton.onclick = function() {
+            // 曲名とアーティスト名を取得し、未入力の場合は "Unknown" を設定
+            const titleField = document.getElementById("title");
+            const artistField = document.getElementById("artist");
+
+            const title = titleField ? (titleField.value || 'Unknown') : 'Unknown';
+            const artist = artistField ? (artistField.value || 'Unknown') : 'Unknown';
+            
+            // 日時を取得してファイル名に追加するためにフォーマット
+            const now = new Date();
+            const formattedDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}-${String(now.getSeconds()).padStart(2, '0')}`;
+            
+            // 完全なファイル名を生成
+            const fileName = `${title}-${artist}-歌詞カード進捗-${formattedDate}.json`;
+            
+            // 編集状態を保存するためのデータを収集
+            const annotationsData = {
+                lyric_id: document.getElementById("lyric_id").value || '',
+                title: title,
+                artist: artist,
+                fullText: document.getElementById('annotated-lyrics').innerHTML
+            };
+
+            // データをJSON形式に変換し、Blobを作成
+            const json = JSON.stringify(annotationsData, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            // ダウンロード用リンクを作成してクリック
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName; // 自動生成したファイル名を設定
+            a.click();
+
+            // オブジェクトURLを解放
+            URL.revokeObjectURL(url);
+        };
+    }
+    
+        // 新しい機能：ファイルから復元する機能
+        const loadFromFileButton = document.getElementById("load-from-file-button");
+        if (loadFromFileButton) {
+            loadFromFileButton.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const annotationsData = JSON.parse(e.target.result);
+                            document.getElementById("lyric_id").value = annotationsData.lyric_id;
+                            document.getElementById("title").value = annotationsData.title;
+                            document.getElementById("artist").value = annotationsData.artist;
+                            document.getElementById('annotated-lyrics').innerHTML = annotationsData.fullText;
+                        } catch (error) {
+                            console.error("Error loading annotations:", error);
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            });
+        }
+    
+    
+    
+    
 // PDF保存ボタンのクリックイベント
 document.addEventListener("DOMContentLoaded", function() {
     const exportPdfButton = document.getElementById("export-pdf-button");

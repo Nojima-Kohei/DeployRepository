@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ボイストレーナーが開発！『歌い方攻略マニュアル付き歌詞カード』作成アプリ</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'lyrics/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'lyrics/allauth_styles.css' %}">
 </head>
 <body>
     <header>
@@ -30,9 +30,7 @@
         {% else %}
             <nav>
                 <ul>
-                    {% if request.resolver_match.view_name != 'welcome' %}<!-- Welcomeページではホームへのリンクを表示しない（2024/8/28追加） -->
-                        <li><a href="{% url 'welcome' %}">ホームへ</a></li>
-                    {% endif %}
+                    <li><a href="{% url 'welcome' %}">ホームへ</a></li>
                 </ul>
             </nav>
         {% endif %}

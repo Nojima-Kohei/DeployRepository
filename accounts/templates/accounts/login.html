@@ -7,23 +7,29 @@
 {% bootstrap_javascript %}  <!-- 必要ならBootstrapのJSも読み込み -->
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="text-center mb-4">ログイン</h2>
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <form method="POST" action="{% url 'accounts:login' %}">
-                {% csrf_token %}
-                <div class="form-group">
-                    {{ form.as_p }}
-                </div>
-                <button type="submit" class="btn btn-primary btn-block mt-3">ログイン</button>
-                <div class="text-center mt-3">
-                    <a href="{% provider_login_url 'twitter' %}" class="twitter-button">
-                        <img src="{% static 'images/sign-in-with-twitter-gray.png' %}" alt="Sign in with Twitter">
-                    </a>
-                </div>
-            </form>
+{% if not user.is_authenticated %}
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">ログイン</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form method="POST" action="{% url 'accounts:login' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        {{ form.as_p }}
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block mt-3">ログイン</button>
+                    <div class="text-center mt-3">
+                        <a href="{% provider_login_url 'twitter' %}" class="twitter-button">
+                            <img src="{% static 'images/sign-in-with-twitter-gray.png' %}" alt="Sign in with Twitter">
+                        </a>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
+{% else %}
+    <div class="container mt-5">
+        <p class="text-center">ログイン済みです。<a href="{% url 'mypage' %}">マイページへへ</a></p>
+    </div>
+{% endif %}
 {% endblock %}

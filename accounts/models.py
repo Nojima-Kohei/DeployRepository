@@ -49,21 +49,20 @@ class UserManager(BaseUserManager): # ☆3
         return user
 
 
-class User(AbstractBaseUser, PermissionsMixin): # ☆1
-
-    # 使いたいFieldを追加
+class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=255)
-    email = models.EmailField(max_length=255, unique=True)
-    is_active = models.BooleanField(default=False)
+    email = models.EmailField(max_length=255, unique=True, blank=True, null=True)
+    twitter_id = models.CharField(max_length=255, unique=True, blank=True, null=True)
+    is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
     objects = UserManager()
 
-    USERNAME_FIELD = 'email' # ☆2 このテーブルのレコードを一意に識別
-    REQUIRED_FIELDS = ['username'] # スーパーユーザ作成時に入力する
+    USERNAME_FIELD = 'email'  # ここはemailのままでOK
+    REQUIRED_FIELDS = ['username']
 
     class Meta:
         db_table = 'users'
 
     def __str__(self):
-        return self.email
+        return self.email or self.twitter_id or self.username

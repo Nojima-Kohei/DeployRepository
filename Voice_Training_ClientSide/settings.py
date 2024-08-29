@@ -52,7 +52,7 @@ ROOT_URLCONF = 'Voice_Training_ClientSide.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates'),os.path.join(BASE_DIR, 'templates', 'allauth')], #2024/8/28追加
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -135,9 +135,10 @@ ACCOUNT_USERNAME_REQUIRED = True  # ユーザー名を必須にしない
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True  # パスワード確認欄
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True  # メール確認後にログイン
 AUTHENTICATION_BACKENDS = (
+    'accounts.authentication.EmailOrTwitterIDBackend',  # 追加したカスタムバックエンド
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
-    'accounts.authentication.EmailBackend',  # 追加したカスタムバックエンド
+
 )
 
 SITE_ID = 1

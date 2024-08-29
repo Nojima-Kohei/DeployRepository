@@ -3,9 +3,28 @@
 
 {% block content %}
 <div class="container">
+
+        <!-- ボイトレ用語一覧のリンクをページの最上部に移動 -->
+        <p><a href="{% url 'Term:term_list' %}" target="_blank" rel="noopener noreferrer">ボイトレ用語一覧</a></p>
+
+
     <h2>歌詞変換</h2>
-    <p><a href="{% url 'Term:term_list' %}" target="_blank" rel="noopener noreferrer">ボイトレ用語一覧</a>.</p> <!-- 用語一覧へのリンク -->
     
+
+    <!-- 折り畳み式の説明文を追加 -->
+    <div class="accordion-menu">
+        <div class="card">
+            <details>
+                <summary>［使い方］</summary>
+                <p>1. 上の入力欄に歌詞の原文をコピー＆ペーストしてください。</p>
+                <p>2. 「ひらがなに変換」ボタンを押すと下の入力欄に変換済みの歌詞が挿入されます。</p>
+                <p>3. 次のページで注釈を編集しやすいよう、お手数ですが、下の欄で誤変換の修正や改行、空白の挿入など適宜手直しをお願いします。</p>
+                <p>4. 保存ボタンを押す <span style="color: red;">(※必ず押してください！)</span></p>
+                <p>5. 「次へ」ボタンを押して注釈編集ページへ移動して下さい。</p>
+            </details>
+        </div>
+    </div>
+
     {% if user.is_authenticated %}
         <form method="post" action="{% url 'lyrics_convert' %}" class="lyrics-form">
             {% csrf_token %}
@@ -21,17 +40,6 @@
         </form>
         <button type="button" onclick="window.location.href='{% url 'lyrics_annotate' %}';">次へ</button>
 
-                <!-- 手順の説明文を追加 -->
-                <div class="text-center mt-4">
-                    <p>
-                        ［使い方］<br>
-                        1. 上の入力欄に歌詞の原文をコピー＆ペーストしてください。<br><br>
-                        2. 「ひらがなに変換」ボタンを押すと下の入力欄に変換済みの歌詞が挿入されます。<br><br>
-                        3. 次のページで注釈を編集しやすいよう、お手数ですが、下の欄で誤変換の修正や改行、空白の挿入など適宜手直しをお願いします。<br><br>
-                        4. 保存ボタンを押す <span style="color: red;">(※必ず押してください！)</span><br><br>
-                        5. 「次へ」ボタンを押して注釈編集ページへ移動して下さい。
-                    </p>
-                </div>
     {% else %}
         <p>このページにアクセスするには、ログインが必要です。</p>
         <a href="{% url 'accounts:login' %}">ログインページへ</a>

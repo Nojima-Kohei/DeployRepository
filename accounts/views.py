@@ -1,4 +1,4 @@
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate,logout
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
@@ -90,6 +90,20 @@ def delete_song(request, lyric_id):
         song.delete()
         return redirect('mypage')
     return render(request, 'accounts/confirm_delete.html', {'song': song})
+
+#2024/8/26追加
+def logout_and_clear_session(request):
+    request.session.flush()  # これでセッションを完全にクリアします
+    logout(request)  # その後、ユーザーをログアウトさせます
+    return redirect('login')  # ログインページなどにリダイレクトします
+
+
+@login_required #2024/8/26追加 セッションは消えるようになったがまだローカルストレージの削除を実装していない
+def return_lyrics_input_from_mypage(request):
+    lyrics_text = request.session.get('lyrics', '').replace('<br>', '\n').replace('&nbsp;', ' ')  # セッションから歌詞を取得して改行と空白を元に戻す
+    hiragana_text = request.session.get('hiragana', '').replace('<br>', '\n').replace('&nbsp;', ' ')  # セッションからひらがなを取得して改行と空白を元に戻す
+    return render(request, 'lyrics/lyrics_input.html', {'lyrics': lyrics_text, 'hiragana': hiragana_text})  # テンプレートをレンダリングして返す
+
 
 class MyPageView(LoginRequiredMixin, TemplateView):
     template_name = 'accounts/mypage.html'
