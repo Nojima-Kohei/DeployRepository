@@ -1,0 +1,3 @@
+id,password,last_login,is_superuser,username,email,is_staff,twitter_id,is_active
+1,pbkdf2_sha256$600000$Zac1fURU8ZAn8Wx7HBl7d4$ANxKuLrNuT7iLsGLk7CJN/YLg8t+m5qnrxN5lINzoBE=,2024-08-28 16:28:51.624710,1,むんうぉか,themoonwalkerofficial@gmail.com,1,,1
+2,pbkdf2_sha256$600000$yb0AY0OmzqhrfDvh0SEaSG$qlfFpXnP9TFiU65fEzRW0CvnFCyQ2/WGPm/z+tV52Ps=,2024-08-28 13:20:34.094376,0,テスト111,tester111@mail.com,0,,1

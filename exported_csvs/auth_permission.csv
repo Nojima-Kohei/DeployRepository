@@ -1,0 +1,70 @@
+id,content_type_id,codename,name
+1,1,add_logentry,Can add log entry
+2,1,change_logentry,Can change log entry
+3,1,delete_logentry,Can delete log entry
+4,1,view_logentry,Can view log entry
+5,2,add_permission,Can add permission
+6,2,change_permission,Can change permission
+7,2,delete_permission,Can delete permission
+8,2,view_permission,Can view permission
+9,3,add_group,Can add group
+10,3,change_group,Can change group
+11,3,delete_group,Can delete group
+12,3,view_group,Can view group
+13,4,add_contenttype,Can add content type
+14,4,change_contenttype,Can change content type
+15,4,delete_contenttype,Can delete content type
+16,4,view_contenttype,Can view content type
+17,5,add_session,Can add session
+18,5,change_session,Can change session
+19,5,delete_session,Can delete session
+20,5,view_session,Can view session
+21,6,add_site,Can add site
+22,6,change_site,Can change site
+23,6,delete_site,Can delete site
+24,6,view_site,Can view site
+25,7,add_emailaddress,Can add email address
+26,7,change_emailaddress,Can change email address
+27,7,delete_emailaddress,Can delete email address
+28,7,view_emailaddress,Can view email address
+29,8,add_emailconfirmation,Can add email confirmation
+30,8,change_emailconfirmation,Can change email confirmation
+31,8,delete_emailconfirmation,Can delete email confirmation
+32,8,view_emailconfirmation,Can view email confirmation
+33,9,add_socialaccount,Can add social account
+34,9,change_socialaccount,Can change social account
+35,9,delete_socialaccount,Can delete social account
+36,9,view_socialaccount,Can view social account
+37,10,add_socialapp,Can add social application
+38,10,change_socialapp,Can change social application
+39,10,delete_socialapp,Can delete social application
+40,10,view_socialapp,Can view social application
+41,11,add_socialtoken,Can add social application token
+42,11,change_socialtoken,Can change social application token
+43,11,delete_socialtoken,Can delete social application token
+44,11,view_socialtoken,Can view social application token
+45,12,add_lyric,Can add lyric
+46,12,change_lyric,Can change lyric
+47,12,delete_lyric,Can delete lyric
+48,12,view_lyric,Can view lyric
+49,13,add_annotation,Can add annotation
+50,13,change_annotation,Can change annotation
+51,13,delete_annotation,Can delete annotation
+52,13,view_annotation,Can view annotation
+53,14,add_user,Can add user
+54,14,change_user,Can change user
+55,14,delete_user,Can delete user
+56,14,view_user,Can view user
+57,15,add_lyricinformation,Can add lyric information
+58,15,change_lyricinformation,Can change lyric information
+59,15,delete_lyricinformation,Can delete lyric information
+60,15,view_lyricinformation,Can view lyric information
+61,16,add_annotationinformation,Can add annotation information
+62,16,change_annotationinformation,Can change annotation information
+63,16,delete_annotationinformation,Can delete annotation information
+64,16,view_annotationinformation,Can view annotation information
+65,17,add_term,Can add term
+66,17,change_term,Can change term
+67,17,delete_term,Can delete term
+68,17,view_term,Can view term
+69,17,can_edit_glossary,Can edit glossary terms

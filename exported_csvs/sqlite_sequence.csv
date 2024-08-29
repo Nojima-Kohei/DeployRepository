@@ -1,0 +1,14 @@
+name,seq
+django_migrations,39
+django_content_type,17
+auth_permission,69
+auth_group,0
+account_emailaddress,0
+django_admin_log,32
+django_site,1
+socialaccount_socialapp,1
+socialaccount_socialtoken,0
+socialaccount_socialaccount,0
+socialaccount_socialapp_sites,1
+Term_term,14
+users,2
