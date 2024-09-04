@@ -1,35 +1,137 @@
 {% extends "base.html" %}
-{% load django_bootstrap5 %}  <!-- タグライブラリをロード -->
+{% load django_bootstrap5 %}
 {% load socialaccount %}
 {% load static %}
 
-{% bootstrap_css %}  <!-- BootstrapのCSSを読み込み -->
-{% bootstrap_javascript %}  <!-- 必要ならBootstrapのJSも読み込み -->
+{% bootstrap_css %}
+{% bootstrap_javascript %}
 
 {% block content %}
 {% if not user.is_authenticated %}
-    <div class="container mt-5">
-        <h2 class="text-center mb-4">ログイン</h2>
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <form method="POST" action="{% url 'accounts:login' %}">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        {{ form.as_p }}
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block mt-3">ログイン</button>
-                    <div class="text-center mt-3">
-                        <a href="{% provider_login_url 'twitter' %}" class="twitter-button">
-                            <img src="{% static 'images/sign-in-with-twitter-gray.png' %}" alt="Sign in with Twitter">
-                        </a>
-                    </div>
-                </form>
+    <h2 class="text-center mb-4">ログイン</h2>
+    <form method="POST" action="{% url 'accounts:login' %}">
+        {% csrf_token %}
+
+        <!-- フォーム全体のエラーメッセージを表示 -->
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
             </div>
+        {% endif %}
+        
+        <div class="form-group">
+            <label for="{{ form.username.id_for_label }}">メールアドレス:</label>
+            {{ form.username }}
+            {% if form.username.errors %}
+                <div class="text-danger">
+                    {% for error in form.username.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
-    </div>
+        
+        <div class="form-group">
+            <label for="{{ form.password.id_for_label }}">パスワード:</label>
+            {{ form.password }}
+            {% if form.password.errors %}
+                <div class="text-danger">
+                    {% for error in form.password.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <button type="submit" class="btn btn-primary mt-3">ログイン</button>
+        
+        <div class="text-center mt-3">
+            <a href="{% provider_login_url 'twitter' %}" class="twitter-button">
+                <img src="{% static 'images/sign-in-with-twitter-gray.png' %}" alt="Sign in with Twitter">
+            </a>
+        </div>
+
+        <!-- エラーメッセージをTwitterボタンの下に表示 -->
+        {% if form.errors %}
+        <div class="error-messages" style="max-width: 450px; margin: 20px auto; padding: 10px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 5px; text-align: left;">
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </form>
 {% else %}
-    <div class="container mt-5">
-        <p class="text-center">ログイン済みです。<a href="{% url 'mypage' %}">マイページへへ</a></p>
-    </div>
+    <p class="text-center">ログイン済みです。<a href="{% url 'accounts:mypage' %}">マイページへ</a></p>
 {% endif %}
+
+<style>
+    /* フォームの中央揃え */
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* フォーム全体を中央揃えにする */
+        justify-content: center;
+        margin: 0 auto; /* フォームを中央に配置 */
+    }
+
+    form .form-group {
+        width: 100%;
+        max-width: 300px; /* フォームの最大幅を設定 */
+    }
+
+    form input[type="email"], 
+    form input[type="password"] {
+        width: 100%; /* フォームフィールドを親要素の幅に合わせる */
+        padding: 10px;
+        box-sizing: border-box;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
+
+
+    
+    form label {
+        margin-bottom: 5px; /* ラベルと入力フィールドの間にスペースを確保 */
+        font-size: 14px; /* ラベルのフォントサイズを設定 */
+        color: #333; /* ラベルの色を設定 */
+        text-align: left; /* 左揃えにする */
+        display: block; /* ブロック要素として表示 */
+    }
+
+    /* ボタンの幅を固定 */
+    button[type="submit"] {
+        width: 100%;
+        max-width: 300px; /* ボタンの最大幅を300pxに固定 */
+        padding: 10px;
+    }
+
+    /* Twitterボタンの親要素を中央揃えに */
+    .text-center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    /* ログインボタンとTwitterボタンの間隔を設定 */
+    .twitter-button {
+        margin-top: 10px; /* ログインボタンとの間に20pxの間隔を追加 */
+    }
+
+    /* Twitterボタンの画像サイズ */
+    .twitter-button img {
+        width: 190px;
+        max-width: 300px; /* 画像の最大幅を200pxに固定 */
+    }
+</style>
+
 {% endblock %}

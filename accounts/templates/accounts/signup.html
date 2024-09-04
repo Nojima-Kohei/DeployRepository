@@ -1,32 +1,44 @@
 {% extends "base.html" %}
 {% load static %}
-{% load django_bootstrap5 %}  <!-- タグライブラリをロード -->
+{% load django_bootstrap5 %}
 {% load socialaccount %}
 
-{% bootstrap_css %}  <!-- BootstrapのCSSを読み込み -->
-{% bootstrap_javascript %}  <!-- 必要ならBootstrapのJSも読み込み -->
-
+{% bootstrap_css %}
+{% bootstrap_javascript %}
 
 {% block content %}
 {% if not user.is_authenticated %}
-<div class="container mt-5">
-    <h2 class="text-center">新規ユーザー登録</h2>
-    <p class="text-center">あなただけの歌い方設計図付き歌詞カードを作れるアプリです！</p>
-    <p class="text-center">歌詞をコピペしたら、ワンクリックで全文をひらがなに変換！</p>
-    <p class="text-center">マウスひとつで、1文字単位で書き込めます！</p>
-    <p class="text-center">まずは、新規登録をしてアプリをお試しください。また、既にアカウントをお持ちの場合は、ログインしてください。</p>
-
-    <div class="card p-4 shadow-sm">
-        <form method="post" action="{% url 'accounts:signup' %}">
-            {% csrf_token %}
-            {{ form.as_p }}  <!-- フォーム全体を {{ form.as_p }} でレンダリング -->
-            <button type="submit" class="btn btn-primary mt-3 w-100">登録</button> <!-- 登録ボタン -->
-        </form>
-    </div>
+<h2 class="text-center">新規ユーザー登録</h2><!-- 2024/09/03 -->
+<div class="card p-4 shadow-sm mx-auto" style="max-width: 450px;">
+    <form method="post" action="{% url 'accounts:signup' %}">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                <!-- 個別のエラー表示を抑制 -->
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary mt-3 w-100">登録</button>
+    </form>
 </div>
+
+{% if form.errors %}
+<div class="error-messages" style="max-width: 450px; margin: 20px auto; padding: 10px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 5px; text-align: left;">
+    {% for field in form %}
+        {% for error in field.errors %}
+            <p>{{ error }}</p>
+        {% endfor %}
+    {% endfor %}
+    {% for error in form.non_field_errors %}
+        <p>{{ error }}</p>
+    {% endfor %}
+</div>
+{% endif %}
+
 {% else %}
 <div class="container mt-5">
-    <p class="text-center">ログイン済みです。<a href="{% url 'mypage' %}">マイページに戻る</a></p>
+    <p class="text-center">ログイン済みです。<a href="{% url 'accounts:mypage' %}">マイページに戻る</a></p>
 </div>
 {% endif %}
 
@@ -40,29 +52,57 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+/* コンテナの幅を調整 */
 .card {
-    background-color: #ffffff;
-    border-radius: 8px;
-    padding: 20px;
+    max-width: 450px; /* カード全体の最大幅を設定 */
+    margin: 0 auto; /* コンテナを中央に配置 */
+    padding: 20px; /* 内側の余白を追加 */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 軽い影を追加して視覚的な深さを追加 */
+    border-radius: 8px; /* カードの角を丸く */
+    text-align: center; /* フォームのテキストを中央揃えに */
 }
 
-form input, form select, form textarea {
-    width: 100%;
+/* フォームフィールドのスタイルを統一 2024/09/03 */
+form input[type="text"], 
+form input[type="email"], 
+form input[type="password"], 
+form select, 
+form textarea {
+    width: 250px; /* フォームフィールドの幅を統一 */
+    max-width: 100%; /* 最大幅も100%に設定 */
     padding: 10px;
-    margin-bottom: 10px;
+    margin: 0 auto; /* 左右のマージンを自動で均等に */
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 5px;
     box-sizing: border-box;
     font-size: 16px;
 }
 
+/* ラベルのスタイルを統一 */
+form label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    text-align: left;
+}
+
+/* フォーム全体の配置を中央揃え */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* フォーム全体を中央に揃える */
+    gap: 10px;
+}
+
+/* ボタンの幅を統一 */
 .btn {
     width: 100%;
+    max-width: 250px;
     padding: 10px;
     background-color: #007bff;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 5px;
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s ease;

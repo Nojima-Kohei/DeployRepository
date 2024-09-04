@@ -4,15 +4,59 @@
 {% if user.is_authenticated %}
 {% block content %}
 <div class="container">
-    <h2>{{ user.username }}さんのマイページ</h2>
+    <!-- ユーザー名と編集リンクを並べる （2024/09/03）-->
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+        <h2>{{ user.username }}さんのマイページ</h2>
+        <!-- 編集リンクを追加、マージンを追加 -->
+        <a href="#" id="edit-link" style="color: #007bff; text-decoration: none; margin-left: 20px;">［ユーザー名を編集］</a>
+    </div>
+
+    <!-- 編集フォームを追加、最初は非表示 -->
+    <form id="edit-form" method="POST" action="{% url 'accounts:edit_username' %}" style="display: none; margin-top: 20px;">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="username">ユーザー名を編集:</label>
+            <input type="text" name="username" id="username" value="{{ user.username }}" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">保存</button>
+    </form>
+
+    <!-- JavaScriptを追加 -->
+    <script>
+        document.getElementById('edit-link').addEventListener('click', function(event) {
+            event.preventDefault();
+            var form = document.getElementById('edit-form');
+            if (form.style.display === 'none') {
+                form.style.display = 'block';
+            } else {
+                form.style.display = 'none';
+            }
+        });
+    </script>
 
     <!-- サイト全体の見出し -->
-    <div class="intro-container">
-        <h3>「歌い方攻略マニュアル付き歌詞カード」作成アプリへようこそ！</h3>
-        <p class="text-center">カラオケの採点画面みたいな注釈付き歌詞カードを作れるアプリです！</p>
-        <p class="text-center">歌詞をコピペしたら、ワンクリックで全文をひらがなに変換！</p>
-        <p class="text-center">マウスひとつで、1文字単位で書き込めます！</p>
-    </div>
+    <div class="container">
+        <!-- サイト全体の見出し -->
+        <h3 style="font-size: 1.3em;">「歌い方攻略マニュアル付き歌詞カード」作成アプリへようこそ！</h3>
+    
+        <!-- 折り畳みメニュー -->
+        <div class="intro-container">
+            <div class="card" style="margin: 0 auto; width: 350px;">
+                <details>
+                    <summary style="width: 350px; box-sizing: border-box; padding: 10px; background-color: #f8f9fa;">
+                        このアプリについて
+                    </summary>
+                    <p style="text-align: left; padding: 10px;">
+                        カラオケの採点画面のように、視覚的にわかりやすい注釈付き歌詞カードを作れるアプリです！歌詞をコピペしたら、ワンクリックで全文をひらがなに変換！マウスさえあれば、1文字単位で書き込めます！
+                    </p>
+                    <p>
+                        <span style="color: green;">前回の続きから始める</span><br>保存した編集データがあれば途中から再開<br>
+                        <span style="color: red;">新しい歌詞カードを作成</span><br>歌詞の原文をコピペして歌詞カードを新規作成<br>
+                        <span style="color: purple;">ボイトレ用語一覧</span><br>本アプリにおけるボイトレ用語の定義まとめ
+                    </p>
+                </details>
+            </div>
+        </div>
 
     <!-- ボタンと折り畳みメニューを横並びに配置 -->
     <div class="button-and-menu">
@@ -25,44 +69,44 @@
             </p>
         </div>
 
-        <!-- 右側に折り畳みメニューを配置 -->
+        <!-- 右側に折り畳みメニューを配置(2024/09/03) -->
         <div class="accordion-menu">
-            <div class="card">
-                <details>
-                    <summary>"歌が上手くなるコツ"ってなんだと思いますか？</summary>
-                    <p>私は自分が憧れる歌手、好きな歌手を徹底的にモノマネすることだと思っています。</p>
+            <div class="card" style="margin: 0 auto;">
+                <details style="width: 390px;">
+                    <summary style="width: 400px; box-sizing: border-box; padding: 0px; background-color: #f8f9fa;">"歌が上手くなるコツ"ってなんだと思いますか？</summary>
+                    <p style="text-align: center;">私は<span style="color: red;">『自分が憧れる歌手、好きな歌手の徹底的なモノマネ』</span>だと考えています！</p>
                 </details>
             </div>
-            <div class="card">
-                <details>
-                    <summary>歌声と絵の具は似てる</summary>
-                    <p>持っている色が赤い絵の具だけだったら赤しか塗れません。</p>
-                    <p>でも青も手に入れたら？そう、紫も塗れるようになります！</p>
-                    <p>黄色の絵の具を手に入ればオレンジも緑も塗れるようになりますね！</p>
-                    <p>しかも、混ぜる割合のさじ加減を変えるだけで使える色はさらに増えるわけです。</p>
+            <div class="card" style="margin: 0 auto;">
+                <details style="width: 390px;">
+                    <summary style="width: 390px; box-sizing: border-box; padding: 0px; background-color: #f8f9fa;">歌声と絵の具は似てる</summary>
+                    <p>持っている絵の具が<span style="color: red;">赤</span>だけだと<span style="color: red;">赤</span>しか塗れません。<br>でも<span style="color: blue;">青</span>も手に入れたら？</p><br>
+                    <p>そう、<span style="color: purple;">紫</span>も塗れるようになります！<span style="color: rgb(194, 194, 10);">黄色</span>の絵の具を手に入れば<span style="color: orange;">オレンジ</span>も<span style="color: rgb(5, 163, 5);">緑</span>も塗れるようになりますね！</p>
+                    <p>しかも、混ぜる割合のさじ加減を変えるだけで使える色はさらに増えるわけです。</p><br>
                     <p>歌も同じです！ものまねの引き出しが増えれば増えるほど、表現に自由が利くようになるんです。</p>
-                    <p>そうしてたくさん増やした末に、持って生まれた自分だけのオリジナルボイスと混ぜる、私はこれが極意だと思っています！</p>
-                    <p>でも……。</p>
+                    <p>そうして<span style="color: red;"><u>たくさん増やした末に、持って生まれた自分だけのオリジナルボイスと混ぜる</u></span>、私はこれが極意だと思っています！</p><br>
+                    <p style="text-align: center;">でも……。</p>
                 </details>
             </div>
-            <div class="card">
-                <details>
-                    <summary>聴き取れる情報の解像度が勝敗を分ける</summary>
-                    <p>最近トレンドの歌って、素人に歌わせる気がないのでは…？と思うほどむずかしいですよね…。</p>
-                    <p>すごいってことは分かるんだけど、レベルが高すぎて"どうすごいのか"がわからない…そんな経験はありませんか？</p>
-                    <p>「憧れるあの人が使っている歌唱法」の存在を知らなければ、そもそもそこに意識を向けて聴かないから、情報の解像度が下がる→ものまねの質も落ちると負のスパイラルに…。</p>
+            <div class="card" style="margin: 0 auto;">
+                <details style="width: 390px;">
+                    <summary style="width: 400px; box-sizing: border-box; padding: 0px; background-color: #f8f9fa;">聴き取れる情報の解像度が勝敗を分ける</summary>
+                    <p>最近トレンドの歌って、素人に歌わせる気がないのでは…？と思うほどむずかしいですよね…。</p><br>
+                    <p style="text-align: center;">『すごいってことは分かるんだけど、レベルが高すぎて"どうすごいのか"がわからない…』<br><br>そんな経験はありませんか？</p><br>
+                    <p style="text-align: center;"><span style="color: red;">『憧れるあの人が使っている歌唱法』</span><p><br>この存在を知らなければ、そもそもそこに意識を向けて聴かないから、情報の解像度が下がる→ものまねの質も落ちると負のスパイラルに…。</p>
                 </details>
             </div>
-            <div class="card">
-                <details>
-                    <summary>それが作った理由です</summary>
-                    <p>あらかじめ用意された選択肢から選ぶ形式であなた自身が歌詞の注釈を付けられるアプリを作れば、ここでこう歌う！という対策付き歌詞カードを手に入れながら耳も養えて一石二鳥なのでは！？と思いこのWebアプリをを作りました！</p>
-                    <p>マウスひとつで、1文字単位で注釈を書き込めます！</p>
+            <div class="card" style="margin: 0 auto;">
+                <details style="width: 390px;">
+                    <summary style="width: 400px; box-sizing: border-box; padding: 0px; background-color: #f8f9fa;">それがこのアプリを作った理由です</summary>
+                    <p>あらかじめ用意された選択肢から選ぶ形式であなた自身が歌詞の注釈を付けられるアプリを作れば、<br><br><p style="text-align: center;">『ここでこう歌う！』</p><br>という対策付き歌詞カードを手に入れながら耳も養えて一石二鳥なのでは！？と思いこのWebアプリをを作りました！マウスひとつで、1文字単位で注釈を書き込めます！</p>
                 </details>
             </div>
         </div>
     </div>
 </div>
+
+
 
 <!-- スクリプトの追加 2024/8/26-->
 <script>

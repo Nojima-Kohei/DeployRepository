@@ -1,41 +1,53 @@
 {% extends "base.html" %}
 {% load socialaccount %}
 
-{% block content %}
+{% block content %}<!-- 2024/09/03 -->
+<h2 style="text-align: center;">「歌い方攻略マニュアル付き歌詞カード」作成アプリへようこそ！</h2>
 <div class="container">
     {% if not user.is_authenticated %}
-        <h2>「歌い方攻略マニュアル付き歌詞カード」作成アプリへようこそ！</h2>
-        <p>マウスひとつで、歌唱テクニックを表す注釈画像や発声法を表すマーカーを書き込めるアプリです！</p>
-        <p>歌詞をコピペすると全文をワンタッチでひらがなに変換！注釈を1文字単位で書き込めます！</p>
-        <p>初めての方は「新規登録」、既にアカウントをお持ちの場合は「ログイン」してください。</p>
+        <p style="text-align: left; width: 100%;">
+            マウスひとつで、歌唱テクニックを表す注釈画像や発声法を表すマーカーを書き込めるアプリです！
+            歌詞をコピペすると全文をワンタッチでひらがなに変換！注釈を1文字単位で書き込めます！<br>
+        </p>
         <!-- 新規登録とログインへのリンクボタン -->
-        <a href="{% url 'accounts:signup' %}" class="btn">新規ユーザー登録</a>
-        <a href="{% url 'accounts:login' %}" class="btn">ログイン</a>
+        <div style="text-align: center;">
+            <label for="signup-button" style="display: block; margin-bottom: 5px;">はじめての方</label>
+            <a id="signup-button" href="{% url 'accounts:signup' %}" class="btn" style="text-align: center;">新規ユーザー登録</a>
+        </div>
+        <div style="text-align: center; margin-top: 15px;">
+            <label for="login-button" style="display: block; margin-bottom: 5px;">既にアカウントをお持ちの方</label>
+            <a id="login-button" href="{% url 'accounts:login' %}" class="btn" style="text-align: center;">ログイン</a>
+        </div>
     {% else %}
-    <h2>「歌い方攻略マニュアル付き歌詞カード」作成アプリへようこそ！</h2>
-    <p>マウスひとつで、歌唱テクニックを表す注釈画像や発声法を表すマーカーを書き込めるアプリです！</p>
-    <p>歌詞をコピペすると全文をワンタッチでひらがなに変換！注釈を1文字単位で書き込めます！</p>
-    <p>あなたはログイン済みです！このままマイページへどうぞ！</p>
-        <p><a href="{% url 'accounts:mypage' %}" class="btn">マイページへ</a></p>
+        <p style="text-align: left; width: 100%;">
+            マウスひとつで、歌唱テクニックを表す注釈画像や発声法を表すマーカーを書き込めるアプリです！
+            歌詞をコピペすると全文をワンタッチでひらがなに変換！注釈を1文字単位で書き込めます！<br>
+        </p>
+        <!-- マイページへのリンクボタン -->
+        <div style="margin-top: 15px;">
+            <label for="mypage-button" style="text-align: center; display: block; margin-bottom: 5px;">あなたはログイン済みです！</label>
+            <a id="mypage-button" href="{% url 'accounts:mypage' %}" class="btn" style="text-align: center;">マイページへ</a>
+        </div>
     {% endif %}
 </div>
 
+
 <style>
 .container {
-    max-width: 800px; /* コンテナの最大幅を800pxに拡大 */
+    max-width: 500px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 10px 20px; /* 上下のパディングを増やして縦幅を調整 */
     background-color: #f9f9f9;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    text-align: center; /* ボタンを中央揃えにする */
+    text-align: left;
 }
 
 .btn {
     display: inline-block;
-    width: 250px; /* ボタンの幅を指定 */
+    width: 250px;
     padding: 10px;
-    margin: 10px 0; /* ボタン間にスペースを追加 */
+    margin: 3px 0;
     background-color: #00bfff;
     color: white;
     text-align: center;
@@ -53,7 +65,7 @@
 /* レスポンシブ対応 */
 @media (max-width: 600px) {
     .btn {
-        width: 100%; /* モバイルでボタンを全幅に設定 */
+        width: 100%;
     }
 }
 </style>

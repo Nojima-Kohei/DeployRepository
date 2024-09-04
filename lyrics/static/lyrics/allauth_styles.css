@@ -378,7 +378,7 @@ form .input-group {
 
 /* テキストフィールドとその他の入力フィールドのスタイル */
 form input[type="text"], form input[type="email"], form input[type="password"], select, textarea {
-    width: 100%; /* フィールドを親要素の幅に合わせる */
+    width: 300px; /* 固定幅に設定して、サイズを統一 */
     padding: 10px;
     box-sizing: border-box;
     font-size: 16px;

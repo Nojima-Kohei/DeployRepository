@@ -8,13 +8,14 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from django.contrib.auth import get_user_model
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, CustomSignupForm
+from .forms import EditUsernameForm  # 新しいフォームをインポート
 
 import json  # JSONデータを扱うためのモジュールをインポート
 
-# ユーザー登録ビュー
+# ユーザー登録ビュー(202409/03)
 def signup(request):
     if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
+        form = CustomSignupForm(request.POST)
         if form.is_valid():
             user = form.save()
             # カスタムバックエンドを指定してログイン
@@ -103,6 +104,18 @@ def return_lyrics_input_from_mypage(request):
     lyrics_text = request.session.get('lyrics', '').replace('<br>', '\n').replace('&nbsp;', ' ')  # セッションから歌詞を取得して改行と空白を元に戻す
     hiragana_text = request.session.get('hiragana', '').replace('<br>', '\n').replace('&nbsp;', ' ')  # セッションからひらがなを取得して改行と空白を元に戻す
     return render(request, 'lyrics/lyrics_input.html', {'lyrics': lyrics_text, 'hiragana': hiragana_text})  # テンプレートをレンダリングして返す
+
+
+@login_required #2024/09/03追加
+def edit_username(request):
+    if request.method == 'POST':
+        form = EditUsernameForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('/accounts/mypage/')  # 名前編集後、マイページにリダイレクト
+    else:
+        form = EditUsernameForm(instance=request.user)
+    return render(request, 'accounts/mypage.html', {'form': form})
 
 
 class MyPageView(LoginRequiredMixin, TemplateView):

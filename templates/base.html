@@ -14,15 +14,14 @@
             <p>{{ user.username }}さん、ようこそ！</p>
             <nav>
                 <ul>
-                    {% if '/accounts/mypage/' not in request.path %}<!-- マイページではマイページのリンクを表示しない（2024/8/28追加） -->
+                    {% if '/accounts/mypage/' not in request.path and request.resolver_match.view_name != 'welcome' %}<!-- Welcomeページおよびマイページではマイページのリンクを表示しない(2024/09/04) -->
                         <li><a href="{% url 'accounts:mypage' %}">マイページ</a></li>
                     {% endif %}
-                        <!-- ログアウトボタンをPOSTリクエストに修正 -->
-                        <li>
-                            <form id="logout-form" method="post" action="{% url 'accounts:logout' %}">
-                                {% csrf_token %}
-                                <a href="{% url 'accounts:logout' %}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">ログアウト</a>
-
+                    <!-- ログアウトボタンをPOSTリクエストに修正 -->
+                    <li>
+                        <form id="logout-form" method="post" action="{% url 'accounts:logout' %}">
+                            {% csrf_token %}
+                            <a href="{% url 'accounts:logout' %}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">ログアウト</a>
                         </form>
                     </li>
                 </ul>
@@ -30,7 +29,7 @@
         {% else %}
             <nav>
                 <ul>
-                    {% if request.resolver_match.view_name != 'welcome' %}<!-- Welcomeページではホームへのリンクを表示しない（2024/8/28追加） -->
+                    {% if request.resolver_match.view_name != 'welcome' %}<!-- Welcomeページではホームへのリンクを表示しない -->
                         <li><a href="{% url 'welcome' %}">ホームへ</a></li>
                     {% endif %}
                 </ul>

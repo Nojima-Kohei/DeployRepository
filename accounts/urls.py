@@ -4,6 +4,7 @@ from . import views
 from .forms import CustomAuthenticationForm
 from django.urls import path, include
 from .views import logout_and_clear_session
+from .forms import EditUsernameForm
 
 app_name = 'accounts'  # 名前空間を設定
 
@@ -22,4 +23,5 @@ urlpatterns = [
     path('delete_song/<int:lyric_id>/', views.delete_song, name='delete_song'),
     path('logout/', logout_and_clear_session, name='logout'),
     path('return_lyrics_input_from_mypage/', views.return_lyrics_input_from_mypage, name='return_lyrics_input_from_mypage'),
+    path('edit_username/', views.edit_username, name='edit_username'), # ユーザー名編集ページのURLパターンを追加(2024/09/03)
 ]
